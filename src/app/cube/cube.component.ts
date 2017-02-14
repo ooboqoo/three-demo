@@ -4,7 +4,6 @@ import * as THREE from 'three';
 @Component({
   selector: 'app-cube',
   templateUrl: './cube.component.html',
-  styleUrls: ['./cube.component.scss']
 })
 export class CubeComponent implements AfterViewInit {
   @ViewChild('canvas') private canvasRef: ElementRef;
@@ -13,11 +12,10 @@ export class CubeComponent implements AfterViewInit {
     return this.canvasRef.nativeElement;
   }
 
-  private renderer: THREE.WebGLRenderer;
+  private cube: THREE.Mesh;
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
-  private cube: THREE.Mesh;
-
+  private renderer: THREE.WebGLRenderer;
 
   /* CUBE PROPERTIES */
   @Input() public rotationSpeedX = 0.005;
@@ -25,22 +23,20 @@ export class CubeComponent implements AfterViewInit {
   @Input() public size = 200;
 
   /* STAGE PROPERTIES */
-  @Input() public cameraZ = 400;
+  @Input() public cameraZ = 600;
 
   private init() {
-    this.scene = new THREE.Scene();
-
-    this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-    this.camera.position.z = 1000;
-
-    const geometry = new THREE.BoxGeometry( 200, 200, 200 );
+    const geometry = new THREE.BoxGeometry( this.size, this.size, this.size );
     const material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-
     this.cube = new THREE.Mesh( geometry, material );
+
+    this.scene = new THREE.Scene();
     this.scene.add( this.cube );
 
+    this.camera = new THREE.PerspectiveCamera( 75, 1, 100, 1000 );
+    this.camera.position.z = this.cameraZ;
+
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
-    this.renderer.setSize( 800, 800 );  // 会改变 canvas 尺寸大小
   }
 
   private animateCube() {
@@ -54,7 +50,7 @@ export class CubeComponent implements AfterViewInit {
       requestAnimationFrame(render);
       component.animateCube();
       component.renderer.render(component.scene, component.camera);
-    }());
+    })();
   }
 
   ngAfterViewInit() {
