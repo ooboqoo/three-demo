@@ -5,19 +5,19 @@ import { HttpModule } from '@angular/http';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { CubeComponent } from './cube/cube.component';
+import { GeometryComponent } from './geometry/geometry.component';
 import { C1Component } from './charpter1/c1.component';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: 'cube', pathMatch: 'full' },
-  { path: 'cube', component: CubeComponent },
+  { path: '', redirectTo: 'geo', pathMatch: 'full' },
+  { path: 'geo', component: GeometryComponent },
   { path: 'c1', component: C1Component },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    CubeComponent,
+    GeometryComponent,
     C1Component,
   ],
   imports: [
