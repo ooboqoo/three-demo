@@ -44,24 +44,27 @@ export class C1Component implements AfterViewInit {
     this.axes = new AxisHelper(20);
     this.scene.add(this.axes);
 
-    const planeGeometry = new PlaneGeometry(60, 20, 1, 1);
-    const planeMaterial = new MeshLambertMaterial({ color: 0xcccccc });
-    this.plane = new Mesh(planeGeometry, planeMaterial);
+    this.plane = new Mesh(
+      new PlaneGeometry(60, 20, 1, 1),
+      new MeshLambertMaterial({ color: 0xcccccc })
+    );
     this.plane.rotation.x = -0.5 * Math.PI;
     Object.assign(this.plane.position, { x: 10, y: 0, z: 0 });
     this.plane.receiveShadow = true;
     this.scene.add(this.plane);
 
-    const cubeGeometry = new BoxGeometry(5, 5, 5);
-    const cubeMaterial = new MeshLambertMaterial({ color: 0xff0000, wireframe: false });
-    this.cube = new Mesh(cubeGeometry, cubeMaterial);
+    this.cube = new Mesh(
+      new BoxGeometry(5, 5, 5),
+      new MeshLambertMaterial({ color: 0xff0000, wireframe: false })
+    );
     Object.assign(this.cube.position, { x: -8, y: 3, z: 0 });
     this.cube.castShadow = true;
     this.scene.add(this.cube);
 
-    const sphereGeometry = new SphereGeometry(4, 20, 20);
-    const sphereMaterial = new MeshLambertMaterial({ color: 0x4444ff, wireframe: false });
-    this.sphere = new Mesh(sphereGeometry, sphereMaterial);
+    this.sphere = new Mesh(
+      new SphereGeometry(4, 20, 20),
+      new MeshLambertMaterial({ color: 0x4444ff, wireframe: false })
+    );
     Object.assign(this.sphere.position, { x: 15, y: 4, z: 2 });
     this.sphere.castShadow = true;
     this.scene.add(this.sphere);
@@ -82,17 +85,14 @@ export class C1Component implements AfterViewInit {
     this.sphere.position.y = 2 + ( 10 * Math.abs(Math.sin(this.step)));
   }
 
-  private startRenderingLoop() {
-    const component = this;
-    (function render() {
-      requestAnimationFrame(render);
-      component.animateGeometry();
-      component.renderer.render(component.scene, component.camera);
-    }());
+  private renderSence = () => {               // binding `this`
+    requestAnimationFrame(this.renderSence);  // simply regard it as setTimeout()
+    this.animateGeometry();
+    this.renderer.render(this.scene, this.camera);
   }
 
   ngAfterViewInit() {
     this.init();
-    this.startRenderingLoop();
+    this.renderSence();
   }
 }
