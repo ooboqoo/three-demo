@@ -29,7 +29,7 @@ export class GeometryComponent implements AfterViewInit {
   private initCube() {
     this.cubeScene = new Scene();
     this.cube = new Mesh(
-      new BoxGeometry( 200, 200, 200 ),
+      new BoxGeometry( 200, 200, 200, 6, 6, 6 ),
       new MeshBasicMaterial( { color: 0xff0000, wireframe: true } )
     );
     this.cubeScene.add( this.cube );
@@ -55,14 +55,17 @@ export class GeometryComponent implements AfterViewInit {
     this.sphereRenderer = new WebGLRenderer({ canvas: this.sphereRef.nativeElement });
   }
 
-  private animateCube() {
+  private animate() {
     this.cube.rotation.x += 0.005;
     this.cube.rotation.y += 0.01;
+
+    this.sphere.rotation.x += 0.005;
+    this.sphere.rotation.y += 0.01;
   }
 
   private startRenderingLoop = () => {
       requestAnimationFrame(this.startRenderingLoop);
-      this.animateCube();
+      this.animate();
       this.cubeRenderer.render(this.cubeScene, this.cubeCamera);
       this.sphereRenderer.render(this.sphereScene, this.sphereCamera);
   }
