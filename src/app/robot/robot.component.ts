@@ -2,9 +2,9 @@ import { Component, ElementRef, Input, ViewChild, AfterViewInit } from '@angular
 import {
   Scene, PerspectiveCamera, WebGLRenderer, AxisHelper, CameraHelper,
   Mesh, MeshBasicMaterial, MeshLambertMaterial, PlaneGeometry, BoxGeometry, SphereGeometry,
-  SpotLight,
+  SpotLight, DoubleSide, Object3D,
 } from 'three';
-import { OBJLoader } from '../../assets/three/OBJLoader';
+import { OBJLoader } from '../three-plugin/OBJLoader';
 
 @Component({
   selector: 'app-robot',
@@ -22,8 +22,7 @@ export class RobotComponent implements AfterViewInit {
   private scene: Scene;
   private axes: AxisHelper;
   private plane: Mesh;
-  private cube: Mesh;
-  private base: any;
+  private base: Object3D;
   private camera: PerspectiveCamera;
   private spotLight: SpotLight;
   private renderer: WebGLRenderer;
@@ -56,20 +55,13 @@ export class RobotComponent implements AfterViewInit {
     this.plane.receiveShadow = true;
     this.scene.add(this.plane);
 
-    this.cube = new Mesh(
-      new BoxGeometry(5, 5, 5),
-      new MeshLambertMaterial({ color: 0xff0000, wireframe: false })
-    );
-    Object.assign(this.cube.position, { x: -8, y: 3, z: 0 });
-    this.cube.castShadow = true;
-    this.scene.add(this.cube);
-
     this.loader.load('assets/robot/base.obj', obj => {
       obj.traverse(function(child) {
-        if (child instanceof Mesh) { child.material.side = THREE.DoubleSide; }
+        if (child instanceof Mesh) { child.material.side = DoubleSide; }
       });
-      this.base = obj;  // 储存到全局变量中
+      obj.rotation.x = Math.PI * -0.5;
       this.scene.add(obj);
+      this.base = obj;  // 储存到全局变量中
     });
 
     this.spotLight = new SpotLight( 0xffffff );
