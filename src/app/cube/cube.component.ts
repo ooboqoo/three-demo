@@ -3,7 +3,9 @@ import * as THREE from 'three';
 
 @Component({
   selector: 'app-cube',
-  templateUrl: './cube.component.html',
+  template: `
+    <canvas #canvas width="500" height="500"></canvas>
+  `
 })
 export class CubeComponent implements AfterViewInit {
   @ViewChild('canvas') private canvasRef: ElementRef;
