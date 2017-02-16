@@ -21,8 +21,7 @@ export class OBJLoader {
       // f vertex/uv vertex/uv vertex/uv
       face_vertex_uv: /^f\s+(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)(?:\s+(-?\d+)\/(-?\d+))?/,
       // f vertex/uv/normal vertex/uv/normal vertex/uv/normal
-      face_vertex_uv_normal: new RegExp('/^f\s+(-?\d+)\/(-?\d+)\/(-?\d+)\s+(-?\d+)\/' +
-        '(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\/(-?\d+)(?:\s+(-?\d+)\/(-?\d+)\/(-?\d+))?/'),
+      face_vertex_uv_normal: /^f\s+(-?\d+)\/(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\/(-?\d+)(?:\s+(-?\d+)\/(-?\d+)\/(-?\d+))?/,
       // f vertex//normal vertex//normal vertex//normal
       face_vertex_normal: /^f\s+(-?\d+)\/\/(-?\d+)\s+(-?\d+)\/\/(-?\d+)\s+(-?\d+)\/\/(-?\d+)(?:\s+(-?\d+)\/\/(-?\d+))?/,
       // o object_name | g group_name
