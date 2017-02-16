@@ -5,6 +5,8 @@ import {
   SpotLight, DoubleSide, Object3D,
 } from 'three';
 import { OBJLoader } from '../three-plugin/OBJLoader';
+import { OrbitControls } from '../three-plugin/OrbitControls';
+
 
 @Component({
   selector: 'app-robot',
@@ -27,6 +29,7 @@ export class RobotComponent implements AfterViewInit {
   private spotLight: SpotLight;
   private renderer: WebGLRenderer;
   private loader: OBJLoader;
+  private controls: OrbitControls;
 
   private step = 0;
 
@@ -63,6 +66,9 @@ export class RobotComponent implements AfterViewInit {
       this.scene.add(obj);
       this.base = obj;  // 储存到全局变量中
     });
+
+    this.controls = new OrbitControls(this.camera, this.canvas);
+    this.controls.enableKeys = false;
 
     this.spotLight = new SpotLight( 0xffffff );
     this.spotLight.position.set( -40, 60, -20 );
