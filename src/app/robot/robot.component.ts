@@ -1,8 +1,8 @@
 import { Component, ElementRef, Input, ViewChild, AfterViewInit } from '@angular/core';
 import {
-  Scene, PerspectiveCamera, WebGLRenderer, AxisHelper, CameraHelper,
+  Scene, PerspectiveCamera, WebGLRenderer, AxisHelper, SpotLight, Object3D,
   Mesh, MeshBasicMaterial, MeshLambertMaterial, PlaneGeometry, BoxGeometry, SphereGeometry,
-  SpotLight, DoubleSide, Object3D,
+  DoubleSide,
 } from 'three';
 import { OBJLoader } from '../three-plugin/OBJLoader';
 import { OrbitControls } from '../three-plugin/OrbitControls';
@@ -25,6 +25,9 @@ export class RobotComponent implements AfterViewInit {
   private axes: AxisHelper;
   private plane: Mesh;
   private base: Object3D;
+  private arm1: Object3D;
+  private arm2: Object3D;
+  private zaxis: Object3D;
   private camera: PerspectiveCamera;
   private spotLight: SpotLight;
   private renderer: WebGLRenderer;
@@ -38,7 +41,7 @@ export class RobotComponent implements AfterViewInit {
     this.scene = new Scene();
 
     this.camera = new PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-    Object.assign(this.camera.position, { x: -30, y: 40, z: 30 });
+    Object.assign(this.camera.position, { x: -40, y: 30, z: -20 });
     this.camera.lookAt(this.scene.position);
 
     this.renderer = new WebGLRenderer({ canvas: this.canvas });
@@ -54,7 +57,7 @@ export class RobotComponent implements AfterViewInit {
       new MeshLambertMaterial({ color: 0xcccccc })
     );
     this.plane.rotation.x = -0.5 * Math.PI;
-    Object.assign(this.plane.position, { x: 10, y: 0, z: 0 });
+    Object.assign(this.plane.position, { x: 10, y: -10, z: 0 });
     this.plane.receiveShadow = true;
     this.scene.add(this.plane);
 
@@ -63,8 +66,39 @@ export class RobotComponent implements AfterViewInit {
         if (child instanceof Mesh) { child.material.side = DoubleSide; }
       });
       obj.rotation.x = Math.PI * -0.5;
+      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
       this.scene.add(obj);
-      this.base = obj;  // 储存到全局变量中
+      this.base = obj;
+    });
+
+    this.loader.load('assets/robot/arm_1.obj', obj => {
+      obj.traverse(function(child) {
+        if (child instanceof Mesh) { child.material.side = DoubleSide; }
+      });
+      obj.rotation.x = Math.PI * -0.5;
+      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      this.scene.add(obj);
+      this.arm1 = obj;
+    });
+
+    this.loader.load('assets/robot/arm_2.obj', obj => {
+      obj.traverse(function(child) {
+        if (child instanceof Mesh) { child.material.side = DoubleSide; }
+      });
+      obj.rotation.x = Math.PI * -0.5;
+      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      this.scene.add(obj);
+      this.arm2 = obj;
+    });
+
+    this.loader.load('assets/robot/z_axis.obj', obj => {
+      obj.traverse(function(child) {
+        if (child instanceof Mesh) { child.material.side = DoubleSide; }
+      });
+      obj.rotation.x = Math.PI * -0.5;
+      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      this.scene.add(obj);
+      this.zaxis = obj;
     });
 
     this.controls = new OrbitControls(this.camera, this.canvas);
