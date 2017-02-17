@@ -5,28 +5,29 @@
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finger swipe
 
-import * as THREE from 'three';
+import { Vector3, Vector2, Quaternion, Spherical,
+         EventDispatcher, MOUSE, PerspectiveCamera, OrthographicCamera } from 'three';
 
-export class OrbitControls extends THREE.EventDispatcher {
+export class OrbitControls extends EventDispatcher {
   // 将原先方法里面的 closure 统一移出来放这里
-  private closure = {
+  private CACHE = {
     update: {
-      offset: new THREE.Vector3(),
+      offset: new Vector3(),
       // so camera.up is the orbit axis
-      quat: new THREE.Quaternion().setFromUnitVectors(this.object.up, new THREE.Vector3(0, 1, 0)),
-      lastPosition: new THREE.Vector3(),
-      lastQuaternion: new THREE.Quaternion(),
+      quat: new Quaternion().setFromUnitVectors(this.object.up, new Vector3(0, 1, 0)),
+      lastPosition: new Vector3(),
+      lastQuaternion: new Quaternion(),
     },
-    panLeft: { v: new THREE.Vector3() },
-    panUp: { v: new THREE.Vector3() },
-    pan: { offset: new THREE.Vector3() },
+    panLeft: { v: new Vector3() },
+    panUp: { v: new Vector3() },
+    pan: { offset: new Vector3() },
   };
 
   // Set to false to disable this control
   enabled = true;
 
   // "target" sets the location of focus, where the object orbits around
-  target = new THREE.Vector3();
+  target = new Vector3();
 
   // How far you can dolly in and out ( PerspectiveCamera only )
   minDistance = 0;
@@ -76,7 +77,7 @@ export class OrbitControls extends THREE.EventDispatcher {
   keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
   // Mouse buttons
-  mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
+  mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
 
   // for reset
   target0 = this.target.clone();
@@ -98,24 +99,24 @@ export class OrbitControls extends THREE.EventDispatcher {
   private EPS = 0.000001;
 
   // current position in spherical coordinates
-  private spherical = new THREE.Spherical();
-  private sphericalDelta = new THREE.Spherical();
+  private spherical = new Spherical();
+  private sphericalDelta = new Spherical();
 
   private scale = 1;
-  private panOffset = new THREE.Vector3();
+  private panOffset = new Vector3();
   private zoomChanged = false;
 
-  private rotateStart = new THREE.Vector2();
-  private rotateEnd = new THREE.Vector2();
-  private rotateDelta = new THREE.Vector2();
+  private rotateStart = new Vector2();
+  private rotateEnd = new Vector2();
+  private rotateDelta = new Vector2();
 
-  private panStart = new THREE.Vector2();
-  private panEnd = new THREE.Vector2();
-  private panDelta = new THREE.Vector2();
+  private panStart = new Vector2();
+  private panEnd = new Vector2();
+  private panDelta = new Vector2();
 
-  private dollyStart = new THREE.Vector2();
-  private dollyEnd = new THREE.Vector2();
-  private dollyDelta = new THREE.Vector2();
+  private dollyStart = new Vector2();
+  private dollyEnd = new Vector2();
+  private dollyDelta = new Vector2();
 
   constructor(public object, public domElement: HTMLElement = document.body) {
     super();
@@ -157,8 +158,8 @@ export class OrbitControls extends THREE.EventDispatcher {
 
   // this method is exposed, but perhaps it would be better if we can make it private...
   public update() {
-    const { offset, quat, lastPosition, lastQuaternion } = this.closure.update;
-    const quatInverse = this.closure.update.quat.clone().inverse();
+    const { offset, quat, lastPosition, lastQuaternion } = this.CACHE.update;
+    const quatInverse = this.CACHE.update.quat.clone().inverse();
     const position = this.object.position;
 
     offset.copy(position).sub(this.target);
@@ -262,14 +263,14 @@ export class OrbitControls extends THREE.EventDispatcher {
   }
 
   private panLeft(distance, objectMatrix) {
-    const v = this.closure.panLeft.v;
+    const v = this.CACHE.panLeft.v;
     v.setFromMatrixColumn(objectMatrix, 0); // get X column of objectMatrix
     v.multiplyScalar(- distance);
     this.panOffset.add(v);
   }
 
   private panUp (distance, objectMatrix) {
-    const v = this.closure.panUp.v;
+    const v = this.CACHE.panUp.v;
     v.setFromMatrixColumn(objectMatrix, 1); // get Y column of objectMatrix
     v.multiplyScalar(distance);
     this.panOffset.add(v);
@@ -277,10 +278,10 @@ export class OrbitControls extends THREE.EventDispatcher {
 
   // deltaX and deltaY are in pixels; right and down are positive
   private pan(deltaX, deltaY) {
-    const offset = this.closure.pan.offset;
+    const offset = this.CACHE.pan.offset;
     const element = this.domElement;
 
-    if (this.object instanceof THREE.PerspectiveCamera) {
+    if (this.object instanceof PerspectiveCamera) {
       // perspective
       const position = this.object.position;
       offset.copy(position).sub(this.target);
@@ -292,7 +293,7 @@ export class OrbitControls extends THREE.EventDispatcher {
       // we actually don't use screenWidth, since perspective camera is fixed to screen height
       this.panLeft(2 * deltaX * targetDistance / element.clientHeight, this.object.matrix);
       this.panUp(2 * deltaY * targetDistance / element.clientHeight, this.object.matrix);
-    } else if (this.object instanceof THREE.OrthographicCamera) {
+    } else if (this.object instanceof OrthographicCamera) {
       // orthographic
       this.panLeft(deltaX * (this.object.right - this.object.left) / this.object.zoom / element.clientWidth, this.object.matrix);
       this.panUp(deltaY * (this.object.top - this.object.bottom) / this.object.zoom / element.clientHeight, this.object.matrix);
@@ -304,9 +305,9 @@ export class OrbitControls extends THREE.EventDispatcher {
   }
 
   private dollyIn(dollyScale) {
-    if (this.object instanceof THREE.PerspectiveCamera) {
+    if (this.object instanceof PerspectiveCamera) {
       this.scale /= dollyScale;
-    } else if (this.object instanceof THREE.OrthographicCamera) {
+    } else if (this.object instanceof OrthographicCamera) {
       this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom * dollyScale));
       this.object.updateProjectionMatrix();
       this.zoomChanged = true;
@@ -317,9 +318,9 @@ export class OrbitControls extends THREE.EventDispatcher {
   }
 
   private dollyOut(dollyScale) {
-    if (this.object instanceof THREE.PerspectiveCamera) {
+    if (this.object instanceof PerspectiveCamera) {
       this.scale *= dollyScale;
-    } else if (this.object instanceof THREE.OrthographicCamera) {
+    } else if (this.object instanceof OrthographicCamera) {
       this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom / dollyScale));
       this.object.updateProjectionMatrix();
       this.zoomChanged = true;
