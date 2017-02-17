@@ -41,7 +41,7 @@ export class RobotComponent implements AfterViewInit {
     this.scene = new Scene();
 
     this.camera = new PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-    Object.assign(this.camera.position, { x: -40, y: 30, z: -20 });
+    this.camera.position.set(-40, 30, -20);
     this.camera.lookAt(this.scene.position);
 
     this.renderer = new WebGLRenderer({ canvas: this.canvas });
@@ -57,7 +57,7 @@ export class RobotComponent implements AfterViewInit {
       new MeshLambertMaterial({ color: 0xcccccc })
     );
     this.plane.rotation.x = -0.5 * Math.PI;
-    Object.assign(this.plane.position, { x: 10, y: -10, z: 0 });
+    this.plane.position.set(10, -10, 0);
     this.plane.receiveShadow = true;
     this.scene.add(this.plane);
 
@@ -66,7 +66,7 @@ export class RobotComponent implements AfterViewInit {
         if (child instanceof Mesh) { child.material.side = DoubleSide; }
       });
       obj.rotation.x = Math.PI * -0.5;
-      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      obj.position.set(-2.8, -10, 6);
       this.scene.add(obj);
       this.base = obj;
     });
@@ -76,7 +76,7 @@ export class RobotComponent implements AfterViewInit {
         if (child instanceof Mesh) { child.material.side = DoubleSide; }
       });
       obj.rotation.x = Math.PI * -0.5;
-      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      obj.position.set(-2.8, -10, 6);
       this.scene.add(obj);
       this.arm1 = obj;
     });
@@ -86,7 +86,7 @@ export class RobotComponent implements AfterViewInit {
         if (child instanceof Mesh) { child.material.side = DoubleSide; }
       });
       obj.rotation.x = Math.PI * -0.5;
-      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      obj.position.set(-2.8, -10, 6);
       this.scene.add(obj);
       this.arm2 = obj;
     });
@@ -96,7 +96,7 @@ export class RobotComponent implements AfterViewInit {
         if (child instanceof Mesh) { child.material.side = DoubleSide; }
       });
       obj.rotation.x = Math.PI * -0.5;
-      Object.assign(obj.position, { x: -2.8, y: -10, z: 6 });
+      obj.position.set(-2.8, -10, 6);
       this.scene.add(obj);
       this.zaxis = obj;
     });
